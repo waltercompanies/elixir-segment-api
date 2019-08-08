@@ -93,6 +93,9 @@ defmodule SegmentAPI do
   defp page_params(page, properties, identity, options) do
   end
 
+  defp identity_params(body, user_id: user_id, anonymous_id: anonymous_id),
+    do: Map.merge(body, %{userId: user_id, anonymousId: anonymous_id})
+
   defp identity_params(body, user_id: user_id), do: Map.put(body, :userId, user_id)
 
   defp identity_params(body, anonymous_id: anonymous_id),
