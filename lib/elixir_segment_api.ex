@@ -10,7 +10,7 @@ defmodule SegmentAPI do
   @app_version Keyword.get(Mix.Project.config(), :version)
 
   @doc """
-  Tracks an event for given user_id
+  Tracks an event
   """
   def track(event, properties, identity, options \\ %{}) do
     body =
@@ -29,7 +29,7 @@ defmodule SegmentAPI do
   end
 
   @doc """
-  Tracks an anonymous pageview
+  Tracks a page view
   """
   def page(page, properties, identity, options \\ %{}) do
     body =
@@ -47,6 +47,9 @@ defmodule SegmentAPI do
     |> post_or_return_error("page")
   end
 
+  @doc """
+  Identifies a user
+  """
   def identify(traits, identity, options \\ %{}) do
     body =
       %{
@@ -60,6 +63,23 @@ defmodule SegmentAPI do
     |> remove_nil_values()
     |> Jason.encode()
     |> post_or_return_error("identify")
+  end
+
+  @doc """
+  Aliases an anonymous user to a registered user
+  """
+  def alias(anonymous_id, user_id, options \\ %{}) do
+    body = %{
+      context: context(),
+      integrations: Map.get(options, :integrations),
+      previousId: anonymous_id,
+      userId: user_id
+    }
+
+    body
+    |> remove_nil_values()
+    |> Jason.encode()
+    |> post_or_return_error("alias")
   end
 
   def context,
