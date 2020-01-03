@@ -24,7 +24,7 @@ defmodule SegmentAPI do
 
     body
     |> remove_nil_values()
-    |> Poison.encode()
+    |> Jason.encode()
     |> post_or_return_error("track")
   end
 
@@ -43,7 +43,7 @@ defmodule SegmentAPI do
 
     body
     |> remove_nil_values()
-    |> Poison.encode()
+    |> Jason.encode()
     |> post_or_return_error("page")
   end
 
@@ -58,12 +58,17 @@ defmodule SegmentAPI do
 
     body
     |> remove_nil_values()
-    |> Poison.encode()
+    |> Jason.encode()
     |> post_or_return_error("identify")
   end
 
   def context,
     do: %{library: %{name: "elixir-segment-api", version: @app_version}}
+
+  def process_response_status_code(200), do: Logger.debug("#{__MODULE__} successfully called")
+
+  def process_response_status_code(status_code),
+    do: Logger.info("#{__MODULE__} not successfully called, returned #{status_code}")
 
   defp remove_nil_values(map) do
     map
@@ -77,21 +82,10 @@ defmodule SegmentAPI do
 
   defp post_to_segment(path, http_body), do: post("#{@endpoint}/#{path}", http_body, headers())
 
-  defp process_response_status_code(200), do: Logger.debug("#{__MODULE__} successfully called")
-
-  defp process_response_status_code(status_code),
-    do: Logger.info("#{__MODULE__} not successfully called, returned #{status_code}")
-
   defp headers, do: [Authorization: auth_header(), "Content-Type": "application/json"]
 
   defp auth_header,
     do: "Basic #{Base.encode64(Application.get_env(:segment_api, :api_key, "") <> ":")}"
-
-  defp track_params(event, properties, identity, options) do
-  end
-
-  defp page_params(page, properties, identity, options) do
-  end
 
   defp identity_params(body, user_id: user_id, anonymous_id: anonymous_id),
     do: Map.merge(body, %{userId: user_id, anonymousId: anonymous_id})
