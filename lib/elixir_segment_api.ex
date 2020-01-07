@@ -84,6 +84,7 @@ defmodule SegmentAPI do
 
   def context(%{"context" => context}), do: Map.merge(context, context())
   def context(%{context: context}), do: Map.merge(context, context())
+  def context(_properties), do: context()
 
   def context, do: %{library: %{name: "elixir-segment-api", version: @app_version}}
 
