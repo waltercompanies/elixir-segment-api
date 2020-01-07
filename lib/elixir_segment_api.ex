@@ -16,8 +16,8 @@ defmodule SegmentAPI do
     body =
       %{
         event: event,
-        properties: properties,
-        context: context(),
+        properties: strip_context(properties),
+        context: context(properties),
         integrations: Map.get(options, :integrations)
       }
       |> identity_params(identity)
@@ -35,8 +35,8 @@ defmodule SegmentAPI do
     body =
       %{
         name: page,
-        properties: properties,
-        context: context(),
+        properties: strip_context(properties),
+        context: context(properties),
         integrations: Map.get(options, :integrations)
       }
       |> identity_params(identity)
@@ -82,8 +82,16 @@ defmodule SegmentAPI do
     |> post_or_return_error("alias")
   end
 
-  def context,
-    do: %{library: %{name: "elixir-segment-api", version: @app_version}}
+  def context(%{"context" => context}), do: Map.merge(context, context())
+  def context(%{context: context}), do: Map.merge(context, context())
+
+  def context, do: %{library: %{name: "elixir-segment-api", version: @app_version}}
+
+  def strip_context(properties) do
+    properties
+    |> Map.delete("context")
+    |> Map.delete(:context)
+  end
 
   def process_response_status_code(200), do: Logger.debug("#{__MODULE__} successfully called")
 
