@@ -109,9 +109,9 @@ defmodule SegmentAPI do
 
   defp post_or_return_error({:error, _} = error, _), do: error
 
-  defp post_to_segment(path, http_body), do: post("#{@endpoint}/#{path}", http_body, headers())
+  defp post_to_segment(path, http_body), do: post("#{@endpoint}/#{path}", http_body, headers(), hackney: [pool: :segment])
 
-  defp headers, do: [Authorization: auth_header(), "Content-Type": "application/json", hackney: [pool: :segment]]
+  defp headers, do: [Authorization: auth_header(), "Content-Type": "application/json"]
 
   defp auth_header,
     do: "Basic #{Base.encode64(Application.get_env(:segment_api, :api_key, "") <> ":")}"
