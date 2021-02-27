@@ -111,7 +111,7 @@ defmodule SegmentAPI do
 
   defp post_to_segment(path, http_body), do: post("#{@endpoint}/#{path}", http_body, headers())
 
-  defp headers, do: [Authorization: auth_header(), "Content-Type": "application/json"]
+  defp headers, do: [Authorization: auth_header(), "Content-Type": "application/json", hackney: [pool: :segment]]
 
   defp auth_header,
     do: "Basic #{Base.encode64(Application.get_env(:segment_api, :api_key, "") <> ":")}"
