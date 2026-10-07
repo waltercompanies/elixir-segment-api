@@ -5,7 +5,7 @@ defmodule SegmentAPI.MixProject do
     [
       app: :segment_api,
       version: "0.2.3",
-      elixir: "~> 1.7",
+      elixir: "~> 1.15",
       start_permanent: Mix.env() == :prod,
       deps: deps()
     ]
@@ -24,7 +24,8 @@ defmodule SegmentAPI.MixProject do
       {:jason, "~> 1.1"},
       {:credo, "~> 1.0", only: [:dev, :test]},
       {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
-      {:httpoison, "~> 2.0"}
+      {:req, "~> 0.7.0"},
+      {:bypass, "~> 2.1", only: :test}
     ]
   end
 end
